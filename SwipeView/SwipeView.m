@@ -442,8 +442,13 @@
             }
             else
             {
-                frame = CGRectMake(0.0f, 0.0f, _itemSize.width * _itemsPerPage, self.bounds.size.height);
-                contentSize.width = _itemSize.width * _numberOfItems - (self.bounds.size.width - frame.size.width);
+                CGFloat marginAdjustment = self.leftPadding + self.rightPadding;
+                if (_numberOfItems > 1) {
+                    marginAdjustment += (_numberOfItems - 1) * self.spacing;
+                }
+                
+                frame = CGRectMake(self.leftPadding, 0.0f, _itemSize.width * _itemsPerPage + self.spacing, self.bounds.size.height);
+                contentSize.width = marginAdjustment + _itemSize.width * _numberOfItems - (self.bounds.size.width - frame.size.width);
             }
             break;
         }
@@ -543,7 +548,8 @@
         }
         else
         {
-            view.center = CGPointMake(center.x, _scrollView.frame.size.height/2.0f);
+            CGFloat marginAdjustment = index * self.spacing;
+            view.center = CGPointMake(center.x + marginAdjustment, _scrollView.frame.size.height/2.0f);
         }
         
         view.bounds = CGRectMake(0.0f, 0.0f, _itemSize.width, _itemSize.height);
@@ -1120,7 +1126,13 @@
 - (void)didTap:(UITapGestureRecognizer *)tapGesture
 {
     CGPoint point = [tapGesture locationInView:_scrollView];
-    NSInteger index = _vertical? (point.y / (_itemSize.height)): (point.x / (_itemSize.width));
+    NSInteger index = 0;
+    if (_vertical) {
+        index = point.y / (_itemSize.height);
+    }
+    else {
+        index = point.x / (_itemSize.width + self.spacing);
+    }
     if (_wrapEnabled)
     {
         index = index % _numberOfItems;
