@@ -447,7 +447,7 @@
                     marginAdjustment += (_numberOfItems - 1) * self.spacing;
                 }
                 
-                frame = CGRectMake(self.leftPadding, 0.0f, _itemSize.width * _itemsPerPage + self.spacing, self.bounds.size.height);
+                frame = CGRectMake(self.leftPadding, 0.0f, (_itemSize.width * _itemsPerPage) + self.spacing, self.bounds.size.height);
                 contentSize.width = marginAdjustment + _itemSize.width * _numberOfItems - (self.bounds.size.width - frame.size.width);
             }
             break;
@@ -535,7 +535,7 @@
         }
         else
         {
-            center.x = ([self offsetForItemAtIndex:index] + 0.5f) * _itemSize.width + _scrollView.contentOffset.x;
+            center.x = ([self offsetForItemAtIndex:index] + 0.5f) * (_itemSize.width+self.spacing) + _scrollView.contentOffset.x;
         }
         
         BOOL disableAnimation = !CGPointEqualToPoint(center, view.center);
@@ -548,8 +548,7 @@
         }
         else
         {
-            CGFloat marginAdjustment = index * self.spacing;
-            view.center = CGPointMake(center.x + marginAdjustment, _scrollView.frame.size.height/2.0f);
+            view.center = CGPointMake(center.x-self.spacing/2, _scrollView.frame.size.height/2.0f);
         }
         
         view.bounds = CGRectMake(0.0f, 0.0f, _itemSize.width, _itemSize.height);
@@ -659,7 +658,7 @@
         }
         else
         {
-            [self setContentOffsetWithoutEvent:CGPointMake(_scrollOffset * _itemSize.width, 0.0f)];
+            [self setContentOffsetWithoutEvent:CGPointMake(_scrollOffset * (_itemSize.width + self.spacing), 0.0f)];
         }
         [self didScroll];
         if (time == 1.0f)
@@ -1157,7 +1156,7 @@
         //update scrollOffset
         CGFloat delta = _vertical? (_scrollView.contentOffset.y - _previousContentOffset.y): (_scrollView.contentOffset.x - _previousContentOffset.x);
         _previousContentOffset = _scrollView.contentOffset;
-        _scrollOffset += delta / (_vertical? _itemSize.height: _itemSize.width);
+        _scrollOffset += delta / (_vertical? _itemSize.height: (_itemSize.width + self.spacing));
         
         //update view and call delegate
         [self didScroll];
